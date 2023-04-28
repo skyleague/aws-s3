@@ -1,0 +1,16 @@
+.*
+node_modules
+yalc.lock
+src/**/*.d.ts
+/index.d.ts
+/dist
+
+!.github
+!.vscode
+!.npmrc
+
+!.gitignore
+!.gitkeep
+!.eslintrc.*
+!.prettierignore
+!.eslintignore
