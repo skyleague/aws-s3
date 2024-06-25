@@ -71,3 +71,10 @@ variable "object_lock" {
     default_retention = null
   }
 }
+
+
+variable "enable_eventbridge_notification" {
+  type        = bool
+  description = "Enables eventbridge notification for this bucket."
+  default     = true
+}

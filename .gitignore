@@ -1,16 +1,11 @@
 .*
+__pycache__
 node_modules
-yalc.lock
-src/**/*.d.ts
-/index.d.ts
-/dist
 
 !.github
 !.vscode
 !.npmrc
+!.husky
 
 !.gitignore
 !.gitkeep
-!.eslintrc.*
-!.prettierignore
-!.eslintignore
