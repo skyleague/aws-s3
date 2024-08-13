@@ -15,17 +15,6 @@ variable "tags" {
   default     = {}
 }
 
-variable "abort_incomplete_multipart_upload" {
-  type = object({
-    days_after_initiation = number
-  })
-
-  description = "Abort incomplete multipart upload after a certain number of days."
-  default = {
-    days_after_initiation = 3
-  }
-}
-
 variable "custom_kms_key_arn" {
   type        = string
   description = "The ARN of the custom KMS key to use for server-side encryption."
@@ -77,4 +66,46 @@ variable "enable_eventbridge_notification" {
   type        = bool
   description = "Enables eventbridge notification for this bucket."
   default     = true
+}
+
+variable "abort_incomplete_multipart_upload" {
+  type = object({
+    days_after_initiation = number
+  })
+
+  description = "Abort incomplete multipart upload after a certain number of days."
+  default = {
+    days_after_initiation = 3
+  }
+
+  nullable = true
+}
+
+variable "lifecycle_rules" {
+  type = list(object({
+    id      = string
+    enabled = optional(bool, true)
+    prefix  = optional(string)
+    tags    = optional(map(string), {})
+    noncurrent_version_expiration = optional(object({
+      days           = optional(number)
+      newer_versions = optional(number)
+    }))
+    expiration = optional(object({
+      days = number
+    }))
+    transition = optional(object({
+      days          = number
+      storage_class = string
+    }))
+    noncurrent_version_transition = optional(object({
+      days           = optional(number)
+      newer_versions = optional(number)
+      storage_class  = string
+    }))
+  }))
+
+  description = "List of lifecycle rules to apply to the bucket."
+  default     = []
+  nullable    = false
 }

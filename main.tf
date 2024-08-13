@@ -30,6 +30,56 @@ resource "aws_s3_bucket_lifecycle_configuration" "this" {
       }
     }
   }
+
+  dynamic "rule" {
+    for_each = var.lifecycle_rules
+    content {
+      id     = rule.value.id
+      status = rule.value.enabled != false ? "Enabled" : "Disabled"
+
+      dynamic "filter" {
+        for_each = rule.value.prefix != null ? [rule.value.prefix] : []
+        content {
+          prefix = rule.value.prefix
+        }
+
+      }
+
+      dynamic "filter" {
+        for_each = try(rule.value.tags, {})
+        content {
+          tag {
+            key   = filter.key
+            value = filter.value
+          }
+        }
+      }
+
+      dynamic "noncurrent_version_expiration" {
+        for_each = rule.value.noncurrent_version_expiration != null ? [rule.value.noncurrent_version_expiration] : []
+        content {
+          noncurrent_days           = noncurrent_version_expiration.value.days
+          newer_noncurrent_versions = noncurrent_version_expiration.value.newer_versions
+        }
+      }
+
+      dynamic "expiration" {
+        for_each = rule.value.expiration != null ? [rule.value.expiration] : []
+        content {
+          days = expiration.value.days
+        }
+      }
+
+      dynamic "noncurrent_version_transition" {
+        for_each = rule.value.noncurrent_version_transition != null ? [rule.value.noncurrent_version_transition] : []
+        content {
+          noncurrent_days           = noncurrent_version_transition.value.days
+          newer_noncurrent_versions = noncurrent_version_transition.value.newer_versions
+          storage_class             = noncurrent_version_transition.value.storage_class
+        }
+      }
+    }
+  }
 }
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_server_side_encryption_configuration
